@@ -1,6 +1,9 @@
 # Wesen
 
-A lightweight, TypeScript-based component system for Phaser games, inspired by Unity's GameObject-Component pattern. Wesen provides a structured way to organize game logic using entities and components, making your Phaser games more maintainable and modular.
+A lightweight, TypeScript-based component system for Phaser games, inspired by
+Unity's GameObject-Component pattern. Wesen provides a structured way to
+organize game logic using entities and components, making your Phaser games more
+maintainable and modular.
 
 ## Features
 
@@ -21,7 +24,8 @@ npm install wesen
 
 ### Entity
 
-An Entity represents a game object in your Phaser scene. It manages components and their lifecycle, automatically handling updates and cleanup.
+An Entity represents a game object in your Phaser scene. It manages components
+and their lifecycle, automatically handling updates and cleanup.
 
 ```typescript
 // Create an entity in your Phaser scene
@@ -30,7 +34,8 @@ const entity = new Entity(this)
 
 ### Components
 
-Components are reusable pieces of functionality that can be attached to entities. Each component has a defined lifecycle:
+Components are reusable pieces of functionality that can be attached to
+entities. Each component has a defined lifecycle:
 
 - `init()`: Called immediately when added to an entity
 - `create()`: Called on the first update after addition
@@ -277,17 +282,9 @@ class EarlyUpdateComponent extends Component {
   required: [TransformComponent, SpriteComponent]
 })
 class AnimationComponent extends Component {
-  // Component will only be added if TransformComponent and SpriteComponent exist
-  // Will throw an error if requirements are not met
-}
-
-// Combine both
-@component({
-  priority: 1,
-  required: [PhysicsComponent]
-})
-class LateUpdateComponent extends Component {
-  // ...
+  // Component will only be added if TransformComponent and
+  // SpriteComponent exist, will throw an error if requirements
+  // are not met.
 }
 ```
 

@@ -1,5 +1,5 @@
-import * as Phaser from 'phaser'
 import type { ComponentConstructor } from '@/types'
+import * as Phaser from 'phaser'
 import type { Component } from './Component'
 import type { Entity } from './Entity'
 import { getComponentMeta, type ComponentMetadata } from './utils/componentMeta'
@@ -140,15 +140,6 @@ export class ComponentSystem {
 
     const meta = getComponentMeta(Component)
 
-    // Check if all required components are present
-    if (meta?.required) {
-      for (const required of meta.required) {
-        if (!this.componentsMap.has(required)) {
-          throw new Error(`Can't add component because ${required.name} is not present`)
-        }
-      }
-    }
-
     this.componentsMap.set(Component, {
       instance,
       meta
@@ -229,6 +220,15 @@ export class ComponentSystem {
   private createComponents() {
     if (this.createComponentsList.length === 0) return
     this.createComponentsList.forEach((component) => {
+      // check for the required components
+      const m = this.componentsMap.get(component.constructor as ComponentConstructor)
+      if (m?.meta?.required) {
+        for (const required of m.meta.required) {
+          if (!this.componentsMap.has(required)) {
+            throw new Error(`Can't add component because ${required.name} is not present`)
+          }
+        }
+      }
       component.create()
     })
     this.createComponentsList = []
