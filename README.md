@@ -1,9 +1,10 @@
 # Wesen
 
-A lightweight, TypeScript-based component system for Phaser games, inspired by
-Unity's GameObject-Component pattern. Wesen provides a structured way to
-organize game logic using entities and components, making your Phaser games more
-maintainable and modular.
+A lightweight, TypeScript-based component system for [Phaser
+games](https://phaser.io/), inspired by Unity's
+[GameObjects](https://docs.unity3d.com/Manual/GameObjects.html). Wesen provides
+a structured way to organize game logic using entities and components, making
+your Phaser games more maintainable and modular.
 
 ## Features
 
