@@ -1,0 +1,47 @@
+{
+  "name": "wesen",
+  "version": "0.0.1",
+  "description": "Unity-style Entites and Components for Phaser JS",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\""
+  },
+  "keywords": [
+    "phaser",
+    "game-engine",
+    "typescript",
+    "game-object",
+    "component"
+  ],
+  "author": "Grischa Erbe <grischa.erbe@googlemail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.23.0",
+    "@types/node": "^22.13.14",
+    "eslint": "^9.23.0",
+    "prettier": "^3.5.3",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.28.0"
+  },
+  "dependencies": {
+    "phaser": "^3.88.2"
+  }
+}
