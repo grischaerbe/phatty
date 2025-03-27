@@ -32,10 +32,10 @@ and their lifecycle, automatically handling updates and cleanup.
 const entity = new Entity(this)
 ```
 
-### Components
+### Component
 
-Components are reusable pieces of functionality that can be attached to
-entities. Each component has a defined lifecycle:
+A Component is a reusable piece of functionality that can be attached to an
+Entity. Each component has a defined lifecycle:
 
 - `init()`: Called immediately when added to an entity
 - `create()`: Called on the first update after addition
@@ -65,7 +65,7 @@ class PlayerComponent extends Component {
 
 ## API Reference
 
-### Entity
+### `Entity`
 
 ```typescript
 class Entity {
@@ -76,7 +76,7 @@ class Entity {
 }
 ```
 
-### ComponentSystem
+### `ComponentSystem`
 
 ```typescript
 class ComponentSystem {
@@ -97,7 +97,7 @@ class ComponentSystem {
 }
 ```
 
-### Component
+### `Component`
 
 ```typescript
 abstract class Component {
@@ -264,7 +264,7 @@ To use decorators, you need to enable them in your `tsconfig.json`:
 
 ### Available Decorators
 
-#### @component
+#### `@component`
 
 A class decorator that allows you to define component metadata:
 
