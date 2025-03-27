@@ -133,7 +133,7 @@ class SpriteComponent extends Component {
 
   init(texture: string) {
     // Only initialize our own sprite
-    this.sprite = this.entity.scene.add.sprite(0, 0, texture)
+    this.sprite = this.entity.scene.add.sprite(0, 0, texture).setOrigin(0.5, 0.5)
   }
 
   create() {
@@ -152,20 +152,28 @@ class SpriteComponent extends Component {
 class MovementComponent extends Component {
   private transform!: TransformComponent
   private speed = 200
+  private direction = new Phaser.Math.Vector2()
 
   create() {
     this.transform = this.entity.components.get(TransformComponent)
   }
 
-  move(direction: Phaser.Math.Vector2) {
-    const normalizedDir = direction.normalize()
+  public update(_time: number, delta: number): void {
+    if (this.direction.equals(Phaser.Math.Vector2.ZERO)) return
+    const normalizedDir = this.direction.normalize()
     this.transform.transform.x += normalizedDir.x * this.speed * (delta / 1000)
     this.transform.transform.y += normalizedDir.y * this.speed * (delta / 1000)
+    this.direction.set(0, 0)
+  }
+
+  move(direction: Phaser.Math.Vector2) {
+    this.direction.copy(direction)
   }
 }
 
-// Input component that controls movement
-@component({ required: [MovementComponent] })
+// Input component that controls movement, priority is -1 to ensure it runs
+// before the movement component
+@component({ required: [MovementComponent], priority: -1 })
 class PlayerInputComponent extends Component {
   private movement!: MovementComponent
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -173,7 +181,7 @@ class PlayerInputComponent extends Component {
 
   init() {
     // Initialize our own resources
-    this.cursors = this.entity.scene.input.keyboard.createCursorKeys()
+    this.cursors = this.entity.scene.input.keyboard!.createCursorKeys()
     this.moveDirection = new Phaser.Math.Vector2()
   }
 
@@ -201,6 +209,10 @@ class PlayerInputComponent extends Component {
 
 // Use in your Phaser scene
 class GameScene extends Phaser.Scene {
+  constructor() {
+    super({ key: 'GameScene' })
+  }
+
   create() {
     const player = new Entity(this)
 
