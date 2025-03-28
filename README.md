@@ -149,7 +149,6 @@ Phatty supports TypeScript decorators for defining component metadata.
 - Priority: Control the execution order of components
 - Required Components: Specify dependencies on other components
 
-<small>
 <details>
 <summary>Enable Decorators in tsconfig.json</summary>
 
@@ -164,7 +163,6 @@ To use decorators, you need to enable them in your `tsconfig.json`:
 ```
 
 </details>
-</small>
 
 ##### Priority System
 
