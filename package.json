@@ -21,7 +21,8 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\""
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "test": "bun test"
   },
   "keywords": [
     "phaser",
@@ -34,8 +35,10 @@
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.23.0",
+    "@types/bun": "^1.2.8",
     "@types/node": "^22.13.14",
     "eslint": "^9.23.0",
+    "eventemitter3": "^5.0.1",
     "prettier": "^3.5.3",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
