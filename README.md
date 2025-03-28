@@ -149,6 +149,10 @@ Phatty supports TypeScript decorators for defining component metadata.
 - Priority: Control the execution order of components
 - Required Components: Specify dependencies on other components
 
+<small>
+<details>
+<summary>Enable Decorators in tsconfig.json</summary>
+
 To use decorators, you need to enable them in your `tsconfig.json`:
 
 ```json
@@ -158,6 +162,9 @@ To use decorators, you need to enable them in your `tsconfig.json`:
   }
 }
 ```
+
+</details>
+</small>
 
 ##### Priority System
 
@@ -254,13 +261,14 @@ abstract class Component {
 ### `component` Class Decorator
 
 ```ts
-function component(meta: ComponentMetadata = {}): ClassDecorator
+function component(meta: { priority?: number; required?: ComponentConstructor[] }): ClassDecorator
 ```
 
 ## Example
 
+Base transform component that provides positioning
+
 ```ts
-// Base transform component that provides positioning
 class TransformComponent extends Component {
   public transform!: Phaser.GameObjects.Container
 
@@ -272,8 +280,11 @@ class TransformComponent extends Component {
     this.transform.destroy()
   }
 }
+```
 
-// Sprite component that uses the transform
+Sprite component that uses the transform
+
+```ts
 @component({ required: [TransformComponent] })
 class SpriteComponent extends Component {
   private sprite!: Phaser.GameObjects.Sprite
@@ -294,8 +305,11 @@ class SpriteComponent extends Component {
     this.sprite.destroy()
   }
 }
+```
 
-// Movement component that moves the transform
+Movement component that moves the transform
+
+```ts
 @component({ required: [TransformComponent] })
 class MovementComponent extends Component {
   private transform!: TransformComponent
@@ -318,9 +332,12 @@ class MovementComponent extends Component {
     this.direction.copy(direction)
   }
 }
+```
 
-// Input component that controls movement, priority is -1 to ensure it runs
-// before the movement component
+Input component that controls movement, priority is -1 to ensure it runs before
+the movement component
+
+```ts
 @component({ required: [MovementComponent], priority: -1 })
 class PlayerInputComponent extends Component {
   private movement!: MovementComponent
@@ -354,8 +371,11 @@ class PlayerInputComponent extends Component {
     }
   }
 }
+```
 
-// Use in your Phaser scene
+Use in your Phaser scene
+
+```ts
 class GameScene extends Phaser.Scene {
   constructor() {
     super({ key: 'GameScene' })
