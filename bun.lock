@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "wesen",
+      "name": "phatty",
       "dependencies": {
         "phaser": "^3.88.2",
       },

@@ -1,8 +1,8 @@
-# Wesen
+# Phatty
 
-A lightweight, TypeScript-based component system for [Phaser
+A lightweight, TypeScript-based entity component system for [Phaser
 games](https://phaser.io/), inspired by Unity's
-[GameObjects](https://docs.unity3d.com/Manual/GameObjects.html). Wesen provides
+[GameObjects](https://docs.unity3d.com/Manual/GameObjects.html). Phatty provides
 a structured way to organize game logic using entities and components, making
 your Phaser games more maintainable and modular.
 
@@ -18,7 +18,7 @@ your Phaser games more maintainable and modular.
 ## Installation
 
 ```bash
-npm install wesen
+npm install phatty
 ```
 
 ## Core Concepts
@@ -248,7 +248,7 @@ The components work together while maintaining loose coupling, making it easy to
 
 ## Component Metadata
 
-Wesen supports TypeScript decorators for defining component metadata.
+Phatty supports TypeScript decorators for defining component metadata.
 
 - Priority: Control the execution order of components
 - Required Components: Specify dependencies on other components
@@ -270,7 +270,7 @@ To use decorators, you need to enable them in your `tsconfig.json`:
 A class decorator that allows you to define component metadata:
 
 ```typescript
-import { component } from 'wesen'
+import { component } from 'phatty'
 
 // Set execution priority (lower numbers execute first)
 @component({ priority: -1 })
