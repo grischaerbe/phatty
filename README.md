@@ -1,6 +1,4 @@
-<img width="1462" alt="Image" src="https://github.com/user-attachments/assets/17a5921d-edce-4b3d-bd15-758b9ab65379" />
-
-# Phatty
+<br /><img width="1462" alt="Image" src="https://github.com/user-attachments/assets/17a5921d-edce-4b3d-bd15-758b9ab65379" /><br /><br />
 
 A lightweight, TypeScript-based entity component system for [Phaser
 games](https://phaser.io/), inspired by Unity's
