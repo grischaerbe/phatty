@@ -97,7 +97,6 @@ player.destroy()
    - [Component](#component)
    - [component](#component-class-decorator)
 1. [Example](#example)
-1. [Contributing](#contributing)
 1. [License](#license)
 
 ## Core Concepts
