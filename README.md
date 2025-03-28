@@ -21,6 +21,83 @@ your Phaser games more maintainable and modular.
 npm install phatty
 ```
 
+## Quick Start
+
+### Creating an Entity
+
+Entities are created in and bound to a Phaser scene. They follow the same
+lifecycle as the scene, and are automatically destroyed when the scene is
+destroyed.
+
+```ts
+// Create an entity in your Phaser scene
+class GameScene extends Phaser.Scene {
+  create() {
+    const player = new Entity(this)
+  }
+}
+```
+
+### Creating a Component
+
+Components are created by extending the `Component` class. They are the building
+blocks of what makes up an entity. They can have parameters, and can reference
+and even require other components.
+
+```ts
+class PlayerComponent extends Component {
+  speed!: number
+
+  init(speed: number) {
+    // Initialize component with parameters
+    this.speed = speed
+  }
+
+  create() {
+    // Set up component and get references to other components
+    const sprite = this.entity.components.get(SpriteComponent)
+  }
+
+  update(time: number, delta: number) {
+    // Update logic
+  }
+
+  destroy() {
+    // Cleanup
+  }
+}
+```
+
+### Adding Components
+
+```ts
+// Add a component to the player entity
+player.components.add(PlayerComponent, 100)
+```
+
+### Destroying an Entity
+
+```ts
+// Destroy the player entity
+player.destroy()
+```
+
+---
+
+## Documentation
+
+1. [Core Concepts](#core-concepts)
+   - [Entity](#entity)
+   - [Component](#component)
+1. [API Reference](#api-reference)
+   - [Entity](#entity)
+   - [ComponentSystem](#componentsystem)
+   - [Component](#component)
+   - [component](#component-class-decorator)
+1. [Example](#example)
+1. [Contributing](#contributing)
+1. [License](#license)
+
 ## Core Concepts
 
 ### Entity
@@ -28,22 +105,23 @@ npm install phatty
 An Entity represents a game object in your Phaser scene. It manages components
 and their lifecycle, automatically handling updates and cleanup.
 
-```typescript
+```ts
 // Create an entity in your Phaser scene
 const entity = new Entity(this)
 ```
 
 ### Component
 
-A Component is a reusable piece of functionality that can be attached to an
-Entity. Each component has a defined lifecycle:
+Components are the building blocks of what makes up an entity. They can have
+parameters, and can reference and even require other components. Each component
+has a defined lifecycle:
 
 - `init()`: Called immediately when added to an entity
 - `create()`: Called on the first update after addition
 - `update(time, delta)`: Called every frame
 - `destroy()`: Called when the entity is destroyed
 
-```typescript
+```ts
 class PlayerComponent extends Component {
   init(speed: number) {
     // Initialize component with parameters
@@ -64,11 +142,69 @@ class PlayerComponent extends Component {
 }
 ```
 
+#### `@component` Class Decorator
+
+Phatty supports TypeScript decorators for defining component metadata.
+
+- Priority: Control the execution order of components
+- Required Components: Specify dependencies on other components
+
+To use decorators, you need to enable them in your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "experimentalDecorators": true
+  }
+}
+```
+
+##### Priority System
+
+Components are updated in priority order, where:
+
+- Lower numbers execute first
+- Default priority is 0
+- Priorities can be negative
+
+```ts
+@component({ priority: -10 })
+class InputComponent extends Component {
+  // Processes input first
+}
+
+@component({ priority: 0 })
+class PhysicsComponent extends Component {
+  // Updates physics based on input
+}
+
+@component({ priority: 10 })
+class CameraComponent extends Component {
+  // Updates camera position after physics
+}
+```
+
+##### Component Dependencies
+
+The `required` metadata ensures component dependencies are met:
+
+```ts
+@component({
+  required: [TransformComponent]
+})
+class SpriteComponent extends Component {
+  create() {
+    // If there's no TransformComponent, this will throw an error
+    const transform = this.entity.components.get(TransformComponent)
+  }
+}
+```
+
 ## API Reference
 
 ### `Entity`
 
-```typescript
+```ts
 class Entity {
   constructor(scene: Phaser.Scene)
   destroy(): void
@@ -79,7 +215,7 @@ class Entity {
 
 ### `ComponentSystem`
 
-```typescript
+```ts
 class ComponentSystem {
   // Adding/Removing Components
   add<T extends Component>(Component: ComponentConstructor<T>, ...args: Parameters<T['init']>): T
@@ -100,7 +236,7 @@ class ComponentSystem {
 
 ### `Component`
 
-```typescript
+```ts
 abstract class Component {
   entity: Entity
 
@@ -115,9 +251,15 @@ abstract class Component {
 }
 ```
 
-## Usage Example
+### `component` Class Decorator
 
-```typescript
+```ts
+function component(meta: ComponentMetadata = {}): ClassDecorator
+```
+
+## Example
+
+```ts
 // Base transform component that provides positioning
 class TransformComponent extends Component {
   public transform!: Phaser.GameObjects.Container
@@ -245,92 +387,6 @@ The components work together while maintaining loose coupling, making it easy to
 - Replace input with AI by creating a new component
 - Modify movement behavior without touching input logic
 - Reuse components across different entities
-
-## Component Metadata
-
-Phatty supports TypeScript decorators for defining component metadata.
-
-- Priority: Control the execution order of components
-- Required Components: Specify dependencies on other components
-
-To use decorators, you need to enable them in your `tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "experimentalDecorators": true
-  }
-}
-```
-
-### Available Decorators
-
-#### `@component`
-
-A class decorator that allows you to define component metadata:
-
-```typescript
-import { component } from 'phatty'
-
-// Set execution priority (lower numbers execute first)
-@component({ priority: -1 })
-class EarlyUpdateComponent extends Component {
-  // ...
-}
-
-// Define required components
-@component({
-  required: [TransformComponent, SpriteComponent]
-})
-class AnimationComponent extends Component {
-  // Component will only be added if TransformComponent and
-  // SpriteComponent exist, will throw an error if requirements
-  // are not met.
-}
-```
-
-### Priority System
-
-Components are updated in priority order, where:
-
-- Lower numbers execute first
-- Default priority is 0
-- Priorities can be negative
-
-Example use cases:
-
-```typescript
-@component({ priority: -10 })
-class InputComponent extends Component {
-  // Processes input first
-}
-
-@component({ priority: 0 })
-class PhysicsComponent extends Component {
-  // Updates physics based on input
-}
-
-@component({ priority: 10 })
-class CameraComponent extends Component {
-  // Updates camera position after physics
-}
-```
-
-### Component Dependencies
-
-The `required` metadata ensures dependencies are met:
-
-```typescript
-@component({
-  required: [TransformComponent]
-})
-class SpriteComponent extends Component {
-  create() {
-    // If there's no TransformComponent, this will throw an error
-    const transform = this.entity.components.get(TransformComponent)
-  }
-}
-```
 
 ## License
 
