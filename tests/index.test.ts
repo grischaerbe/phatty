@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from 'bun:test'
-import { Component } from '../Component'
-import { Entity } from '../Entity'
+import { Component } from '../src/Component'
+import { Entity } from '../src/Entity'
 import { createMockScene } from './scene'
 
 describe('Entity', () => {
@@ -28,15 +28,12 @@ describe('Component', () => {
       init() {
         fn()
       }
-
       create(): void {
         fn()
       }
-
       update(): void {
         fn()
       }
-
       destroy(): void {
         fn()
       }

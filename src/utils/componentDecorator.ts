@@ -23,6 +23,12 @@ export function getComponentMeta<T extends Component>(
   return componentMetadata.get(constructor)
 }
 
+/**
+ * Annotates a component with metadata.
+ *
+ * @param meta - The metadata for the component.
+ * @returns A class decorator.
+ */
 export function component(meta: ComponentMetadata = {}): ClassDecorator {
   return (target) => {
     componentMetadata.set(target, meta)

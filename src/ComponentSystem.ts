@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser'
 import type { Component } from './Component'
 import type { Entity } from './Entity'
-import { getComponentMeta, type ComponentMetadata } from './utils/componentMeta'
+import { getComponentMeta, type ComponentMetadata } from './utils/componentDecorator'
 import type { ComponentConstructor } from './types'
 
 type ComponentMapValue = {

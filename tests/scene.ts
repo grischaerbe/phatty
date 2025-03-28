@@ -1,4 +1,4 @@
-import { MockEventEmitter } from 'src/tests/emitter'
+import { MockEventEmitter } from './emitter'
 
 class MockScene {
   sys: {

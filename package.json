@@ -44,7 +44,7 @@
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.28.0"
   },
-  "dependencies": {
-    "phaser": "^3.88.2"
+  "peerDependencies": {
+    "phaser": "^3.60.0"
   }
 }
