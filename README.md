@@ -1,6 +1,7 @@
 <br />
 
-![Phatty](./phatty.png 'Phatty')
+![Phatty](./phatty-dark.png#gh-dark-mode-only 'Phatty')
+![Phatty](./phatty-light.png#gh-light-mode-only 'Phatty')
 
 <br /><br />
 
