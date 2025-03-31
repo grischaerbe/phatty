@@ -9,7 +9,7 @@ your Phaser games more maintainable and modular.
 ## Features
 
 - 🎮 Unity-style component system for Phaser
-- 🔄 Lifecycle management (init, create, update, destroy)
+- 🔄 Lifecycle management (create, update, destroy)
 - 🎯 Type-safe component references
 - 📦 Component dependency management
 - 🔊 Event system integration
@@ -46,11 +46,8 @@ and even require other components.
 
 ```ts
 class PlayerComponent extends Component {
-  speed!: number
-
-  init(speed: number) {
-    // Initialize component with parameters
-    this.speed = speed
+  constructor(public speed: number) {
+    super()
   }
 
   create() {
@@ -71,7 +68,7 @@ class PlayerComponent extends Component {
 ### Adding Components
 
 ```ts
-// Add a component to the player entity
+// Add a component to the player entity, with parameters
 player.components.add(PlayerComponent, 100)
 ```
 
@@ -115,15 +112,15 @@ Components are the building blocks of what makes up an entity. They can have
 parameters, and can reference and even require other components. Each component
 has a defined lifecycle:
 
-- `init()`: Called immediately when added to an entity
+- `constructor(...args: any[])`: Called immediately when added to an entity
 - `create()`: Called on the first update after addition
 - `update(time, delta)`: Called every frame
 - `destroy()`: Called when the entity is destroyed
 
 ```ts
 class PlayerComponent extends Component {
-  init(speed: number) {
-    // Initialize component with parameters
+  constructor(public speed: number) {
+    super()
   }
 
   create() {
@@ -222,7 +219,10 @@ class Entity {
 ```ts
 class ComponentSystem {
   // Adding/Removing Components
-  add<T extends Component>(Component: ComponentConstructor<T>, ...args: Parameters<T['init']>): T
+  add<T extends ComponentConstructor>(
+    Component: T,
+    ...args: ConstructorParameters<T>
+  ): InstanceType<T>
   remove<T extends Component>(Component: ComponentConstructor<T>): void
   clear(): void
 
@@ -245,7 +245,6 @@ abstract class Component {
   entity: Entity
 
   // Lifecycle Methods
-  init(...args: any[]): void
   create(): void
   update(time: number, delta: number): void
   destroy(): void
@@ -269,7 +268,8 @@ Base transform component that provides positioning
 class TransformComponent extends Component {
   public transform!: Phaser.GameObjects.Container
 
-  public init(x: number, y: number): void {
+  constructor(x: number, y: number) {
+    super()
     this.transform = this.entity.scene.add.container(x, y)
   }
 
@@ -284,11 +284,11 @@ Sprite component that uses the transform
 ```ts
 @component({ required: [TransformComponent] })
 class SpriteComponent extends Component {
-  private sprite!: Phaser.GameObjects.Sprite
+  private sprite: Phaser.GameObjects.Sprite
   private transform!: TransformComponent
 
-  init(texture: string) {
-    // Only initialize our own sprite
+  constructor(texture: string) {
+    super()
     this.sprite = this.entity.scene.add.sprite(0, 0, texture).setOrigin(0.5, 0.5)
   }
 
@@ -338,11 +338,11 @@ the movement component
 @component({ required: [MovementComponent], priority: -1 })
 class PlayerInputComponent extends Component {
   private movement!: MovementComponent
-  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
-  private moveDirection = new Phaser.Math.Vector2()
+  private cursors: Phaser.Types.Input.Keyboard.CursorKeys
+  private moveDirection: Phaser.Math.Vector2
 
-  init() {
-    // Initialize our own resources
+  constructor() {
+    super()
     this.cursors = this.entity.scene.input.keyboard!.createCursorKeys()
     this.moveDirection = new Phaser.Math.Vector2()
   }

@@ -1,5 +1,5 @@
 import { mock } from 'bun:test'
-import { MockEventEmitter } from './emitter'
+import { MockEventEmitter } from './emtter.test'
 
 mock.module('phaser', () => {
   return {

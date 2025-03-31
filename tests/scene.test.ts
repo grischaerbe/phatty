@@ -1,13 +1,13 @@
-import { MockEventEmitter } from './emitter'
+import { createEventEmitter } from './emtter.test'
 
 class MockScene {
   sys: {
-    events: MockEventEmitter
+    events: Phaser.Events.EventEmitter
   }
 
   constructor() {
     this.sys = {
-      events: new MockEventEmitter()
+      events: createEventEmitter()
     }
   }
 }

@@ -1,10 +1,30 @@
 import type { Entity } from './Entity'
 
+export let currentEntity: Entity | undefined
+
+export const setCurrentEntity = (entity: Entity) => {
+  currentEntity = entity
+}
+
+export const resetCurrentEntity = (entity: Entity) => {
+  currentEntity = undefined
+}
+
 export abstract class Component {
   /**
    * The entity that the component is attached to.
    */
-  public entity!: Entity
+  private _entity?: Entity
+
+  get entity(): Entity {
+    const entity = this._entity || currentEntity
+    if (!entity) throw new Error('No entity set')
+    return entity
+  }
+
+  set entity(value: Entity) {
+    this._entity = value
+  }
 
   /**
    * Add an event listener to the entity's lifecycle. The listener will
@@ -23,29 +43,6 @@ export abstract class Component {
       obj.off(...(args as unknown as [any, any, any]))
     })
   }
-
-  /**
-   * Called synchronously when the component is added to the entity. It is **not
-   * guaranteed** that other components are added to the entity yet. Set up
-   * anything strictly internal to this component here. Arguments passed to
-   * `entity.components.add` are passed to this method.
-   *
-   * @example
-   * ```ts
-   * class ContainerComponent extends Component {
-   *   container!: Phaser.GameObjects.Container
-   *
-   *   public init(x: number, y: number): void {
-   *     this.container = this.entity.scene.add.container(x, y)
-   *   }
-   * }
-   *
-   * // Add the component to the entity
-   *
-   * this.entity.components.add(ContainerComponent, 0, 0)
-   * ```
-   */
-  public init(...args: any[]): void {}
 
   /**
    * Called in the first update loop after the component is added to the entity.

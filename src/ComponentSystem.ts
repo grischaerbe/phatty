@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser'
-import type { Component } from './Component'
+import { currentEntity, resetCurrentEntity, setCurrentEntity, type Component } from './Component'
 import type { Entity } from './Entity'
 import { getComponentMeta, type ComponentMetadata } from './utils/componentDecorator'
 import type { ComponentConstructor } from './types'
@@ -118,25 +118,25 @@ export class ComponentSystem {
    * Add a component to the component system. Will throw an error if the
    * component already exists.
    *
-   * The component will be instantiated and instance.onInit will be called with
-   * the given arguments.
+   * The constructor of the component will be called with the given arguments.
    *
    * @example
    * ```ts
    * this.entity.components.add(SpriteRendererComponent, 0, 0, 'ghost')
    * ```
    */
-  public add<T extends Component>(
-    Component: ComponentConstructor<T>,
-    ...args: Parameters<T['init']>
-  ): T {
+  public add<T extends ComponentConstructor>(
+    Component: T,
+    ...args: ConstructorParameters<T>
+  ): InstanceType<T> {
     if (this.componentsMap.has(Component)) {
       throw new Error(`Can't add component because ${Component.name} already exists`)
     }
 
-    const instance = new Component()
+    setCurrentEntity(this.entity)
+    const instance = new Component(args as unknown as [])
+    resetCurrentEntity(this.entity)
     instance.entity = this.entity
-    instance.init(...(args as unknown as []))
 
     const meta = getComponentMeta(Component)
 
@@ -146,11 +146,11 @@ export class ComponentSystem {
     })
 
     this.createComponentsList.push(instance)
-
     this.componentsListDirty = true
+
     this.events.emit('add', instance)
     this.events.emit('update')
-    return instance
+    return instance as InstanceType<T>
   }
 
   /**
