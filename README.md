@@ -216,9 +216,8 @@ class SpriteComponent extends Component {
 ```ts
 class Entity {
   constructor(scene: Phaser.Scene)
-  destroy(): void
   components: ComponentSystem
-  events: Phaser.Events.EventEmitter
+  destroy(): void
 }
 ```
 
@@ -272,7 +271,7 @@ Base transform component that provides positioning
 
 ```ts
 class TransformComponent extends Component {
-  public transform!: Phaser.GameObjects.Container
+  public transform: Phaser.GameObjects.Container
 
   constructor(x: number, y: number) {
     super()
