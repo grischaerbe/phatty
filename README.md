@@ -1,9 +1,5 @@
-<br />
-
 ![Phatty](./phatty-dark.png#gh-dark-mode-only 'Phatty')
 ![Phatty](./phatty-light.png#gh-light-mode-only 'Phatty')
-
-<br /><br />
 
 A lightweight, TypeScript-based entity component system for [Phaser
 games](https://phaser.io/), inspired by Unity's
