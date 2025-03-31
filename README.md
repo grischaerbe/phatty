@@ -1,5 +1,7 @@
 <br />
-![Phatty](./phatty.png "Phatty")
+
+![Phatty](./phatty.png 'Phatty')
+
 <br /><br />
 
 A lightweight, TypeScript-based entity component system for [Phaser
