@@ -2,14 +2,64 @@ import { describe, expect, it, jest } from 'bun:test'
 import { Component } from '../src/Component'
 import { Entity } from '../src/Entity'
 import { createMockScene } from './scene.test'
-import { component } from '../src/utils/componentDecorator'
-import { createEventEmitter, MockEventEmitter } from './emtter.test'
 
 describe('Entity', () => {
   it('should create an entity', () => {
     const scene = createMockScene()
     const entity = new Entity(scene)
     expect(entity).toBeDefined()
+  })
+})
+
+describe('EntityLifecycle', () => {
+  it('respects a scene lifecycle', () => {
+    const scene = createMockScene()
+    const entity = new Entity(scene)
+    const fn = jest.fn()
+    let i = 0
+    class TestComponent extends Component {
+      constructor() {
+        super()
+      }
+      public create(): void {
+        i++
+        fn(i)
+        expect(i).toEqual(1)
+      }
+      public update(time: number, delta: number): void {
+        i++
+        fn(i)
+        expect(i).toEqual(2)
+      }
+      public sleep(): void {
+        i++
+        fn(i)
+        expect(i).toEqual(3)
+      }
+      public wake(): void {
+        i++
+        fn(i)
+        expect(i).toEqual(4)
+      }
+      public pause(): void {
+        i++
+        fn(i)
+        expect(i).toEqual(5)
+      }
+      public resume(): void {
+        i++
+        fn(i)
+        expect(i).toEqual(6)
+      }
+    }
+    entity.components.add(TestComponent)
+    scene.sys.events.emit('update', 0, 0)
+    scene.sys.events.emit('sleep')
+    scene.sys.events.emit('wake')
+    scene.sys.events.emit('pause')
+    scene.sys.events.emit('resume')
+    scene.sys.events.emit('destroy')
+    expect(fn).toHaveBeenCalledTimes(6)
   })
 })
 
@@ -65,24 +115,6 @@ describe('Component', () => {
     }
     entity.components.add(TestComponent)
   })
-
-  it('should listen to events', () => {
-    const scene = createMockScene()
-    const entity = new Entity(scene)
-    const fn = jest.fn()
-    class TestComponent extends Component {
-      constructor() {
-        super()
-        this.listen(this.entity.scene.sys.events, 'event', (arg0: number) => {
-          fn(arg0)
-        })
-      }
-    }
-    entity.components.add(TestComponent)
-    scene.sys.events.emit('event', 1)
-    expect(fn).toHaveBeenCalledTimes(1)
-    expect(fn).toHaveBeenCalledWith(1)
-  })
 })
 
 describe('ComponentSystem', () => {
@@ -120,19 +152,15 @@ describe('ComponentSystem', () => {
     const scene = createMockScene()
     const entity = new Entity(scene)
     let i = 0
-    @component({
-      priority: 1
-    })
     class ComponentB extends Component {
+      public priority: number = 1
       public update(time: number, delta: number): void {
         expect(i).toEqual(1)
         i++
       }
     }
-    @component({
-      priority: -1
-    })
     class ComponentA extends Component {
+      public priority: number = -1
       public update(time: number, delta: number): void {
         expect(i).toEqual(0)
         i++

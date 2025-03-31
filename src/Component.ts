@@ -1,3 +1,4 @@
+import type { ComponentConstructor } from 'src/types'
 import type { Entity } from './Entity'
 
 export let currentEntity: Entity | undefined
@@ -11,6 +12,9 @@ export const resetCurrentEntity = (entity: Entity) => {
 }
 
 export abstract class Component {
+  public priority: number = 0
+  public required: ComponentConstructor[] = []
+
   /**
    * The entity that the component is attached to.
    */
@@ -24,24 +28,6 @@ export abstract class Component {
 
   set entity(value: Entity) {
     this._entity = value
-  }
-
-  /**
-   * Add an event listener to the entity's lifecycle. The listener will
-   * automatically be removed once the entity is destroyed.
-   *
-   * @example
-   * ```ts
-   * this.listen(this.someComponent, 'update', (data) => {
-   *   console.log(data)
-   * })
-   * ```
-   */
-  protected listen<T extends Phaser.Events.EventEmitter>(obj: T, ...args: Parameters<T['on']>) {
-    obj.on(...(args as unknown as [any, any, any]))
-    this.entity.events.once('destroy', () => {
-      obj.off(...(args as unknown as [any, any, any]))
-    })
   }
 
   /**
@@ -79,8 +65,30 @@ export abstract class Component {
   public update(time: number, delta: number): void {}
 
   /**
-   * Called when the entity is destroyed via `entity.destroy()`. Clean up
-   * anything that needs to be cleaned up here.
+   * Called when the scene this component is attached to is put to sleep.
+   */
+  public sleep(): void {}
+
+  /**
+   * Called when the scene this component is attached to is woken up from a
+   * sleep state.
+   */
+  public wake(): void {}
+
+  /**
+   * Called when the scene this component is attached to is paused.
+   */
+  public pause(): void {}
+
+  /**
+   * Called when the scene this component is attached to is resumed from a
+   * paused state.
+   */
+  public resume(): void {}
+
+  /**
+   * Called when the entity is destroyed as part of a scene destroy or shutdown
+   * or via `entity.destroy()`.
    *
    * @example
    * ```ts

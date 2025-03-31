@@ -10,7 +10,7 @@ your Phaser games more maintainable and modular.
 ## Features
 
 - 🎮 Unity-style component system for Phaser
-- 🔄 Lifecycle management (create, update, destroy)
+- 🔄 Lifecycle management (create, update, destroy, …)
 - 🎯 Type-safe component references
 - 📦 Component dependency management
 - 🔊 Event system integration
@@ -87,11 +87,13 @@ player.destroy()
 1. [Core Concepts](#core-concepts)
    - [Entity](#entity)
    - [Component](#component)
+     - [Component Lifecycle](#component-lifecycle)
+     - [Component Priority](#component-priority)
+     - [Component Dependencies](#component-dependencies)
 1. [API Reference](#api-reference)
    - [Entity](#entity)
    - [ComponentSystem](#componentsystem)
    - [Component](#component)
-   - [component](#component-class-decorator)
 1. [Example](#example)
 1. [License](#license)
 
@@ -100,7 +102,7 @@ player.destroy()
 ### Entity
 
 An Entity represents a game object in your Phaser scene. It manages components
-and their lifecycle, automatically handling updates and cleanup.
+and their lifecycle.
 
 ```ts
 // Create an entity in your Phaser scene
@@ -110,58 +112,72 @@ const entity = new Entity(this)
 ### Component
 
 Components are the building blocks of what makes up an entity. They can have
-parameters, and can reference and even require other components. Each component
-has a defined lifecycle:
+parameters, and can reference and even require other components.
+
+#### Component Lifecycle
+
+Each component has a lifecycle:
 
 - `constructor(...args: any[])`: Called immediately when added to an entity
 - `create()`: Called on the first update after addition
 - `update(time, delta)`: Called every frame
-- `destroy()`: Called when the entity is destroyed
+- `sleep()`: Called when the scene is put to sleep
+- `wake()`: Called when the scene is woken up
+- `pause()`: Called when the scene is paused
+- `resume()`: Called when the scene is resumed
+- `destroy()`: Called when the entity is shut down or destroyed
 
 ```ts
 class PlayerComponent extends Component {
   constructor(public speed: number) {
     super()
+    // The constructor is called immediately when the component is added
+    // to an entity via `entity.components.add(PlayerComponent, 100)`.
+    // You have access to the entity that the component is added to
+    // via `this.entity`. You can also access the scene that the entity
+    // belongs to via `this.entity.scene`. Typically, you'll want to set
+    // up any entirely internal state in the constructor.
   }
 
   create() {
-    // Set up component and get references to other components
+    // Set up component and get references to other components. This is
+    // called on the first update after the component is added but before
+    // the first update loop.
     const sprite = this.entity.components.get(SpriteComponent)
   }
 
   update(time: number, delta: number) {
-    // Update logic
+    // Update logic. This is called every frame as long as the component
+    // is not sleeping, not paused, and not destroyed.
+  }
+
+  sleep() {
+    // This is called when the scene this component is attached to is put to
+    // sleep.
+  }
+
+  wake() {
+    // This is called when the scene this component is attached to is woken up
+    // from sleep.
+  }
+
+  pause() {
+    // This is called when the scene this component is attached to is paused.
+  }
+
+  resume() {
+    // This is called when the scene this component is attached to is resumed.
   }
 
   destroy() {
-    // Cleanup
+    // This is called when the component is destroyed because
+    // - The scene it belongs to is destroyed or shut down or
+    // - The entity it belongs to is destroyed with `entity.destroy()`
   }
 }
 ```
 
-#### `@component` Class Decorator
-
-Phatty supports TypeScript decorators for defining component metadata.
-
-- Priority: Control the execution order of components
-- Required Components: Specify dependencies on other components
-
-<details>
-<summary>Enable Decorators in tsconfig.json</summary>
-
-To use decorators, you need to enable them in your `tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "experimentalDecorators": true
-  }
-}
-```
-
-</details>
-
-##### Priority System
+#### Component Priority
 
 Components are updated in priority order, where:
 
@@ -170,31 +186,30 @@ Components are updated in priority order, where:
 - Priorities can be negative
 
 ```ts
-@component({ priority: -10 })
 class InputComponent extends Component {
+  public priority = -10
   // Processes input first
 }
 
-@component({ priority: 0 })
 class PhysicsComponent extends Component {
+  public priority = 0
   // Updates physics based on input
 }
 
-@component({ priority: 10 })
 class CameraComponent extends Component {
+  public priority = 10
   // Updates camera position after physics
 }
 ```
 
-##### Component Dependencies
+#### Component Dependencies
 
 The `required` metadata ensures component dependencies are met:
 
 ```ts
-@component({
-  required: [TransformComponent]
-})
 class SpriteComponent extends Component {
+  required: [TransformComponent]
+
   create() {
     // If there's no TransformComponent, this will throw an error
     const transform = this.entity.components.get(TransformComponent)
@@ -243,22 +258,20 @@ class ComponentSystem {
 
 ```ts
 abstract class Component {
+  // Properties
   entity: Entity
+  priority: number
+  required: (typeof Component)[]
 
   // Lifecycle Methods
   create(): void
   update(time: number, delta: number): void
+  sleep(): void
+  wake(): void
+  pause(): void
+  resume(): void
   destroy(): void
-
-  // Utility Methods
-  protected listen<T extends Phaser.Events.EventEmitter>(obj: T, ...args: Parameters<T['on']>): void
 }
-```
-
-### `component` Class Decorator
-
-```ts
-function component(meta: { priority?: number; required?: ComponentConstructor[] }): ClassDecorator
 ```
 
 ## Example
@@ -283,8 +296,8 @@ class TransformComponent extends Component {
 Sprite component that uses the transform
 
 ```ts
-@component({ required: [TransformComponent] })
 class SpriteComponent extends Component {
+  required: [TransformComponent]
   private sprite: Phaser.GameObjects.Sprite
   private transform!: TransformComponent
 
@@ -308,8 +321,8 @@ class SpriteComponent extends Component {
 Movement component that moves the transform
 
 ```ts
-@component({ required: [TransformComponent] })
 class MovementComponent extends Component {
+  required: [TransformComponent]
   private transform!: TransformComponent
   private speed = 200
   private direction = new Phaser.Math.Vector2()
@@ -336,8 +349,9 @@ Input component that controls movement, priority is -1 to ensure it runs before
 the movement component
 
 ```ts
-@component({ required: [MovementComponent], priority: -1 })
 class PlayerInputComponent extends Component {
+  required: [MovementComponent]
+  priority: -1
   private movement!: MovementComponent
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys
   private moveDirection: Phaser.Math.Vector2

@@ -1,32 +1,19 @@
 import * as Phaser from 'phaser'
+import { EntityLifecycle } from 'src/EntityLifecycle'
 import { ComponentSystem } from './ComponentSystem'
 
 export class Entity {
-  events = new Phaser.Events.EventEmitter()
-  components: ComponentSystem
+  public components: ComponentSystem
+  private lifecycle: EntityLifecycle
 
   constructor(public readonly scene: Phaser.Scene) {
     this.components = new ComponentSystem(this)
-    this.registerListeners()
-  }
-
-  private registerListeners() {
-    this.scene.sys.events.on('update', this.update, this)
-    this.scene.sys.events.on('destroy', this.destroy, this)
-  }
-
-  private unregisterListeners() {
-    this.scene.sys.events.off('update', this.update, this)
-    this.scene.sys.events.off('destroy', this.destroy, this)
-  }
-
-  private update(time: number, delta: number): void {
-    this.components.updateComponents(time, delta)
+    this.lifecycle = new EntityLifecycle(this)
   }
 
   /**
    * Destroy the entity and all of its components. Will invoke
-   * `onDestroy` on all components.
+   * `destroy` on all components.
    *
    * @example
    * ```ts
@@ -34,8 +21,6 @@ export class Entity {
    * ```
    */
   destroy(): void {
-    this.unregisterListeners()
-    this.components.destroyComponents()
-    this.events.emit('destroy')
+    this.lifecycle.destroy()
   }
 }
