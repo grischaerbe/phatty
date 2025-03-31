@@ -116,16 +116,8 @@ parameters, and can reference and even require other components.
 
 #### Component Lifecycle
 
-Each component has a lifecycle:
-
-- `constructor(...args: any[])`: Called immediately when added to an entity
-- `create()`: Called on the first update after addition
-- `update(time, delta)`: Called every frame
-- `sleep()`: Called when the scene is put to sleep
-- `wake()`: Called when the scene is woken up
-- `pause()`: Called when the scene is paused
-- `resume()`: Called when the scene is resumed
-- `destroy()`: Called when the entity is shut down or destroyed
+A component offers life cycle functions that are called at the appropriate times
+in the entity's lifecycle.
 
 ```ts
 class PlayerComponent extends Component {
