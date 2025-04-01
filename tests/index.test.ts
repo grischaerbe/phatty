@@ -61,6 +61,34 @@ describe('EntityLifecycle', () => {
     scene.sys.events.emit('destroy')
     expect(fn).toHaveBeenCalledTimes(6)
   })
+
+  it('should destroy the entity when the scene is destroyed', () => {
+    const scene = createMockScene()
+    const entity = new Entity(scene)
+    const fn = jest.fn()
+    class TestComponent extends Component {
+      public destroy(): void {
+        fn()
+      }
+    }
+    entity.components.add(TestComponent)
+    scene.sys.events.emit('destroy')
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should destroy the entity when manually destroyed', () => {
+    const scene = createMockScene()
+    const entity = new Entity(scene)
+    const fn = jest.fn()
+    class TestComponent extends Component {
+      public destroy(): void {
+        fn()
+      }
+    }
+    entity.components.add(TestComponent)
+    entity.destroy()
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
 })
 
 describe('Component', () => {
