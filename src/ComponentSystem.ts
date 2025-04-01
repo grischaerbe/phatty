@@ -119,7 +119,7 @@ export class ComponentSystem {
     }
 
     setCurrentEntity(this.entity)
-    const instance = new Component(args as unknown as [])
+    const instance = new Component(...(args as unknown as []))
     resetCurrentEntity(this.entity)
     instance.entity = this.entity
 
