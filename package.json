@@ -23,7 +23,8 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "test": "bun test",
-    "release": "bun run build && changeset publish"
+    "release": "bun run build && changeset publish",
+    "changeset:add": "bunx @changesets/cli"
   },
   "keywords": [
     "phaser",
