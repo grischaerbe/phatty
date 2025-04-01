@@ -6,6 +6,13 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bugs": {
+    "url": "https://github.com/grischaerbe/phatty/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grischaerbe/phatty.git"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
