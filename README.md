@@ -24,6 +24,12 @@ npm install phatty
 
 ## Quick Start
 
+See this StackBlitz for a full example:
+
+<a href="https://stackblitz.com/edit/phatty-example?file=src%2Fmain.ts">
+  <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" />
+</a>
+
 ### Creating an Entity
 
 Entities are created in and bound to a Phaser scene. They follow the same
