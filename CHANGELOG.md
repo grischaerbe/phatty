@@ -1,5 +1,11 @@
 # phatty
 
+## 0.0.8
+
+### Patch Changes
+
+- a3835a2: Override scene init to initialize event listeners
+
 ## 0.0.7
 
 ### Patch Changes
