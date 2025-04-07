@@ -1,14 +1,11 @@
-import * as Phaser from 'phaser'
-import { EntityLifecycle } from 'src/EntityLifecycle'
 import { ComponentSystem } from './ComponentSystem'
+import type { Scene } from './Scene'
 
 export class Entity {
   public components: ComponentSystem
-  private lifecycle: EntityLifecycle
 
-  constructor(public readonly scene: Phaser.Scene) {
+  constructor(public readonly scene: Scene) {
     this.components = new ComponentSystem(this)
-    this.lifecycle = new EntityLifecycle(this)
   }
 
   /**
@@ -21,6 +18,7 @@ export class Entity {
    * ```
    */
   destroy(): void {
-    this.lifecycle.destroy()
+    // Hand off to the entity system to remove the entity
+    this.scene.entities.destroy(this)
   }
 }

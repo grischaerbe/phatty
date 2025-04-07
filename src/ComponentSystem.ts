@@ -29,6 +29,17 @@ export class ComponentSystem {
   private componentsMap: Map<typeof Component, Component> = new Map()
   private componentsList: Component[] = []
   private componentsListDirty = true
+
+  /**
+   * Events emitted by the component system.
+   * Events:
+   * - `'add'`: when a component is added
+   *   - `on('add', (component: Component) => {})`
+   * - `'remove'`: when a component is removed
+   *   - `on('remove', (component: Component) => {})`
+   * - `'update'`: when a component is added or removed
+   *   - `on('update', () => {})`
+   */
   public readonly events = new Phaser.Events.EventEmitter()
 
   constructor(private readonly entity: Entity) {}
@@ -120,7 +131,7 @@ export class ComponentSystem {
 
     setCurrentEntity(this.entity)
     const instance = new Component(...(args as unknown as []))
-    resetCurrentEntity(this.entity)
+    resetCurrentEntity()
     instance.entity = this.entity
 
     this.componentsMap.set(Component, instance)

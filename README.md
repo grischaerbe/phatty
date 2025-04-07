@@ -30,19 +30,30 @@ See this StackBlitz for a full example:
   <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" />
 </a>
 
+### Creating a Scene
+
+To use Phatty, you need to extend the `Scene` class. It's a regular Phaser
+scene, but with an `EntitySystem` instance.
+
+```ts
+import { Scene } from 'phatty'
+
+// Create an entity in your Phaser scene
+class GameScene extends Scene {
+  create() {
+    const player = this.entities.create()
+  }
+}
+```
+
 ### Creating an Entity
 
-Entities are created in and bound to a Phaser scene. They follow the same
+Entities are created by calling `this.entities.create()`. They follow the same
 lifecycle as the scene, and are automatically destroyed when the scene is
 destroyed.
 
 ```ts
-// Create an entity in your Phaser scene
-class GameScene extends Phaser.Scene {
-  create() {
-    const player = new Entity(this)
-  }
-}
+const player = this.entities.create()
 ```
 
 ### Creating a Component
@@ -91,6 +102,7 @@ player.destroy()
 ## Documentation
 
 1. [Core Concepts](#core-concepts)
+   - [Scene](#scene)
    - [Entity](#entity)
    - [Component](#component)
      - [Component Lifecycle](#component-lifecycle)
@@ -105,14 +117,29 @@ player.destroy()
 
 ## Core Concepts
 
+### Scene
+
+A Phatty scene is a regular Phaser scene, but with an `EntitySystem` instance
+which allows you to create, manage and query entities.
+
+```ts
+import { Scene } from 'phatty'
+
+class GameScene extends Scene {
+  create() {
+    const player = this.entities.create()
+  }
+}
+```
+
 ### Entity
 
-An Entity represents a game object in your Phaser scene. It manages components
+An Entity represents a game object in your scene. It manages components
 and their lifecycle.
 
 ```ts
 // Create an entity in your Phaser scene
-const entity = new Entity(this)
+const entity = this.entities.create()
 ```
 
 ### Component
@@ -217,6 +244,31 @@ class SpriteComponent extends Component {
 
 ## API Reference
 
+### `Scene`
+
+```ts
+class Scene extends Phaser.Scene {
+  entities: EntitySystem
+}
+```
+
+### `EntitySystem`
+
+```ts
+type EntityQueryOptions = {
+  with?: ComponentConstructor[] | ComponentConstructor
+  without?: ComponentConstructor[] | ComponentConstructor
+}
+
+class EntitySystem {
+  // Events: 'create', 'destroy'
+  events: Phaser.Events.EventEmitter
+  create(): Entity
+  find(options: EntityQueryOptions): Entity | undefined
+  findAll(options: EntityQueryOptions): Entity[]
+}
+```
+
 ### `Entity`
 
 ```ts
@@ -245,9 +297,8 @@ class ComponentSystem {
   has<T extends Component>(Component: ComponentConstructor<T>): boolean
   all(): Component[]
 
-  // Events
+  // Events: 'add', 'remove', 'update'
   events: Phaser.Events.EventEmitter
-  // Emits: 'add', 'remove', 'update'
 }
 ```
 
@@ -255,10 +306,14 @@ class ComponentSystem {
 
 ```ts
 abstract class Component {
+  // Overrideable properties
+  priority: number // Default: 0
+  required: (typeof Component)[] // Default: []
+
   // Properties
   entity: Entity
-  priority: number
-  required: (typeof Component)[]
+  entities: EntitySystem
+  scene: Scene
 
   // Lifecycle Methods
   create(): void
@@ -382,16 +437,18 @@ class PlayerInputComponent extends Component {
 }
 ```
 
-Use in your Phaser scene
+Use in your scene
 
 ```ts
-class GameScene extends Phaser.Scene {
+import { Scene } from 'phatty'
+
+class GameScene extends Scene {
   constructor() {
     super({ key: 'GameScene' })
   }
 
   create() {
-    const player = new Entity(this)
+    const player = this.entities.create()
 
     player.components.add(TransformComponent, 400, 300)
     player.components.add(SpriteComponent, 'player')

@@ -1,5 +1,7 @@
-import type { ComponentConstructor } from 'src/types'
+import type { ComponentConstructor } from './types'
 import type { Entity } from './Entity'
+import type { EntitySystem } from './EntitySystem'
+import type { Scene } from './Scene'
 
 export let currentEntity: Entity | undefined
 
@@ -7,13 +9,37 @@ export const setCurrentEntity = (entity: Entity) => {
   currentEntity = entity
 }
 
-export const resetCurrentEntity = (entity: Entity) => {
+export const resetCurrentEntity = () => {
   currentEntity = undefined
 }
+
+/**
+ * Symbol used to identify the method that will be called to create and update
+ * the component.
+ */
+export const createAndUpdate = Symbol('createAndUpdate')
 
 export abstract class Component {
   public priority: number = 0
   public required: ComponentConstructor[] = []
+
+  private created = false
+
+  private checkRequired() {
+    if (this.required.length > 0) {
+      const missing = this.required.filter((r) => !this.entity.components.has(r)).map((r) => r.name)
+      if (missing.length > 0) throw new Error(`Missing required components: ${missing.join(', ')}`)
+    }
+  }
+
+  [createAndUpdate](time: number, delta: number) {
+    if (!this.created) {
+      this.checkRequired()
+      this.create()
+      this.created = true
+    }
+    this.update(time, delta)
+  }
 
   /**
    * The entity that the component is attached to.
@@ -28,6 +54,14 @@ export abstract class Component {
 
   set entity(value: Entity) {
     this._entity = value
+  }
+
+  get entities(): EntitySystem {
+    return this.entity.scene.entities
+  }
+
+  get scene(): Scene {
+    return this.entity.scene
   }
 
   /**
