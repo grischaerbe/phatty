@@ -52,8 +52,17 @@ export class EntitySystem {
    */
   public query = new QueryBuilder(this.entities)
 
-  constructor(readonly scene: Scene) {
-    this.scene.events.once('boot', this.registerListeners, this)
+  constructor(readonly scene: Scene) {}
+
+  private initialized = false
+  /**
+   * Setup the entity system.
+   * @internal
+   */
+  public setup() {
+    if (this.initialized) return
+    this.registerListeners()
+    this.initialized = true
   }
 
   private registerListeners() {
