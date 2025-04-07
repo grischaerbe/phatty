@@ -1,5 +1,12 @@
 # phatty
 
+## 0.0.5
+
+### Patch Changes
+
+- f7ab055: Revisit entity creation, add query builder, add entity system, add phatty scene
+- c6e4ff0: fix phaser import
+
 ## 0.0.4
 
 ### Patch Changes
