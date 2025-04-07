@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser'
 import { EntitySystem } from './EntitySystem'
 
 export class Scene extends Phaser.Scene {
