@@ -288,17 +288,26 @@ class Scene extends Phaser.Scene {
 ### `EntitySystem`
 
 ```ts
-type EntityQueryOptions = {
-  with?: ComponentConstructor[] | ComponentConstructor
-  without?: ComponentConstructor[] | ComponentConstructor
-}
-
 class EntitySystem {
   // Events: 'create', 'destroy'
   events: Phaser.Events.EventEmitter
+  query: QueryBuilder
   create(): Entity
   find(options: EntityQueryOptions): Entity | undefined
   findAll(options: EntityQueryOptions): Entity[]
+}
+```
+
+### `QueryBuilder`
+
+```ts
+class QueryBuilder {
+  with(...components: ComponentConstructor[]): this
+  without(...components: ComponentConstructor[]): this
+  first(): Entity | undefined
+  all(): Entity[]
+  count(): number
+  exists(): boolean
 }
 ```
 
