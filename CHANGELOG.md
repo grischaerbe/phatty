@@ -1,5 +1,11 @@
 # phatty
 
+## 0.0.6
+
+### Patch Changes
+
+- 430845c: Export Entity type
+
 ## 0.0.5
 
 ### Patch Changes
