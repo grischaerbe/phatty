@@ -16,6 +16,42 @@ export class EntitySystem {
    */
   public readonly events = new Phaser.Events.EventEmitter()
 
+  /**
+   * Start building a query for entities
+   *
+   * @example
+   * ```ts
+   * // Find entities with specific components
+   * scene.entities.query
+   *   .with(PlayerComponent)
+   *   .all()
+   *
+   * // Find entities without specific components
+   * scene.entities.query
+   *   .with(EnemyComponent)
+   *   .without(DeadComponent)
+   *   .all()
+   *
+   * // Find the first matching entity
+   * const player = scene.entities.query
+   *   .with(PlayerComponent)
+   *   .first()
+   *
+   * // Check if any entities match
+   * const hasActivePlayers = scene.entities.query
+   *   .with(PlayerComponent)
+   *   .without(DeadComponent)
+   *   .exists()
+   *
+   * // Count matching entities
+   * const activeEnemyCount = scene.entities.query
+   *   .with(EnemyComponent)
+   *   .without(DeadComponent)
+   *   .count()
+   * ```
+   */
+  public query = new QueryBuilder(this.entities)
+
   constructor(readonly scene: Scene) {
     this.registerListeners()
   }
@@ -66,42 +102,6 @@ export class EntitySystem {
     }
   }
 
-  /**
-   * Start building a query for entities
-   *
-   * @example
-   * ```ts
-   * // Find entities with specific components
-   * scene.entities.query()
-   *   .with(Movement, Sprite)
-   *   .without(Invisible)
-   *   .all()
-   *
-   * // Complex queries with AND/OR conditions
-   * scene.entities.query()
-   *   .with(Player)
-   *   .and()
-   *   .with(Health, Shield)
-   *   .or()
-   *   .with(Invincible)
-   *   .all()
-   *
-   * // Check if any matching entity exists
-   * const hasActivePlayers = scene.entities.query()
-   *   .with(Player, Active)
-   *   .exists()
-   *
-   * // Count matching entities
-   * const enemyCount = scene.entities.query()
-   *   .with(Enemy)
-   *   .without(Dead)
-   *   .count()
-   * ```
-   */
-  public get query(): QueryBuilder {
-    return new QueryBuilder(this.entities)
-  }
-
   private sceneUpdate(time: number, delta: number): void {
     this.entities.forEach((e) => {
       e.components.forEach((c) => {
@@ -146,6 +146,5 @@ export class EntitySystem {
     this.entities.forEach((e) => {
       this.destroy(e)
     })
-    this.entities = []
   }
 }
