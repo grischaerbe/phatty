@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { Component } from '../../src/Component'
-import { createMockScene } from '../scene.test'
+import { createMockScene } from '../scene'
 
 describe('ComponentSystem', () => {
   it('should create a component system', () => {

@@ -1,6 +1,6 @@
 import { EntitySystem } from '../src/EntitySystem'
 import type { Scene } from '../src/Scene'
-import { createEventEmitter } from './emtter.test'
+import { createEventEmitter } from './emtter'
 
 class MockScene {
   sys: {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { createMockScene } from '../scene.test'
+import { createMockScene } from '../scene'
 
 describe('Entity', () => {
   it('should create an entity', () => {

@@ -1,5 +1,5 @@
 [test]
-preload = "./tests/preload.test.ts"
+preload = "./tests/preload.ts"
 coverage = true
 coverageSkipTestFiles = true
 coverageThreshold = { lines = 0.9, functions = 0 }

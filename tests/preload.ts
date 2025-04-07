@@ -1,5 +1,5 @@
 import { mock } from 'bun:test'
-import { MockEventEmitter } from './emtter.test'
+import { MockEventEmitter } from './emtter'
 
 // class MockScene {}
 

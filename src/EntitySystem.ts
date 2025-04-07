@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser'
 import { createAndUpdate } from './Component'
 import { Entity } from './Entity'
-import { QueryBuilder } from './Query'
+import { QueryBuilder } from './QueryBuilder'
 import type { Scene } from './Scene'
 
 export class EntitySystem {
