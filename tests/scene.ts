@@ -13,6 +13,7 @@ class MockScene {
       events: createEventEmitter()
     }
     this.entities = new EntitySystem(this as unknown as Scene)
+    this.entities.setup()
   }
 }
 
