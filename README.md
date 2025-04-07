@@ -244,7 +244,9 @@ class SpriteComponent extends Component {
 
 #### Query Builder
 
-The Query Builder provides a fluent interface for finding entities based on their components. It supports both positive and negative component matching, and offers several methods to get results.
+The Query Builder provides a fluent interface for finding entities based on
+their components. It supports both positive and negative component matching, and
+offers several methods to get results.
 
 ```ts
 // Find entities with specific components
@@ -266,7 +268,8 @@ const activeEnemyCount = query().with(EnemyComponent).without(DeadComponent).cou
 The Query Builder supports the following methods:
 
 - `with(...components)`: Find entities that have all specified components
-- `without(...components)`: Find entities that don't have any of the specified components
+- `without(...components)`: Find entities that don't have any of the specified
+  components
 - `first()`: Get the first matching entity
 - `all()`: Get all matching entities
 - `count()`: Count matching entities
