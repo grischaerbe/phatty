@@ -1,5 +1,11 @@
 # phatty
 
+## 0.0.9
+
+### Patch Changes
+
+- 7dd25d5: bind this
+
 ## 0.0.8
 
 ### Patch Changes
