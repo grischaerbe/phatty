@@ -53,7 +53,7 @@ export class EntitySystem {
   public query = new QueryBuilder(this.entities)
 
   constructor(readonly scene: Scene) {
-    this.registerListeners()
+    this.scene.events.once('boot', this.registerListeners, this)
   }
 
   private registerListeners() {
