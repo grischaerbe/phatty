@@ -1,5 +1,11 @@
 # phatty
 
+## 0.0.10
+
+### Patch Changes
+
+- 3ac68e6: fix tests
+
 ## 0.0.9
 
 ### Patch Changes
