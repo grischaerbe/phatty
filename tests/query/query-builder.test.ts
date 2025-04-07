@@ -1,9 +1,9 @@
-import { Scene } from '../src/Scene'
-import { Entity } from '../src/Entity'
-import { Component } from '../src/Component'
-import { QueryBuilder } from '../src/Query'
+import { Scene } from '../../src/Scene'
+import { Entity } from '../../src/Entity'
+import { Component } from '../../src/Component'
+import { QueryBuilder } from '../../src/Query'
 import { describe, expect, it, beforeEach } from 'bun:test'
-import { createMockScene } from './scene.test'
+import { createMockScene } from '../scene.test'
 
 // Test components
 class TestComponentA extends Component {}
