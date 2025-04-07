@@ -1,6 +1,6 @@
 {
   "name": "phatty",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Unity-style Entites and Components for Phaser JS",
   "type": "module",
   "main": "./dist/index.js",

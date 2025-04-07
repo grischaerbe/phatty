@@ -1,5 +1,11 @@
 # phatty
 
+## 0.0.7
+
+### Patch Changes
+
+- 4a4ea2f: Wait for booting scene
+
 ## 0.0.6
 
 ### Patch Changes
