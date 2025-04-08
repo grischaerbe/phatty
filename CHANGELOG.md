@@ -1,5 +1,11 @@
 # phatty
 
+## 0.0.11
+
+### Patch Changes
+
+- 7313edb: refactor EntitySystem
+
 ## 0.0.10
 
 ### Patch Changes
