@@ -1,5 +1,0 @@
----
-'phatty': patch
----
-
-refactor EntitySystem
