@@ -6,7 +6,7 @@ type Condition = (entity: Entity) => boolean
 export class QueryBuilder {
   private conditions: Condition[] = []
 
-  constructor(private readonly entities: Entity[]) {}
+  constructor(private readonly entities: Set<Entity>) {}
 
   private evaluateConditions(entity: Entity): boolean {
     // No conditions means match all
@@ -70,7 +70,13 @@ export class QueryBuilder {
    * ```
    */
   first(): Entity | undefined {
-    const result = this.entities.find((entity) => this.evaluateConditions(entity))
+    let result: Entity | undefined
+    for (const entity of this.entities) {
+      if (this.evaluateConditions(entity)) {
+        result = entity
+        break
+      }
+    }
     this.conditions = []
     return result
   }
@@ -87,7 +93,12 @@ export class QueryBuilder {
    * ```
    */
   all(): Entity[] {
-    const result = this.entities.filter((entity) => this.evaluateConditions(entity))
+    const result: Entity[] = []
+    for (const entity of this.entities) {
+      if (this.evaluateConditions(entity)) {
+        result.push(entity)
+      }
+    }
     this.conditions = []
     return result
   }

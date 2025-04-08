@@ -5,7 +5,7 @@ import { QueryBuilder } from './QueryBuilder'
 import type { Scene } from './Scene'
 
 export class EntitySystem {
-  private entities: Entity[] = []
+  private entities: Set<Entity> = new Set()
   /**
    * Events emitted by the entity system.
    * Events:
@@ -85,7 +85,7 @@ export class EntitySystem {
    */
   public create() {
     const entity = new Entity(this.scene)
-    this.entities.push(entity)
+    this.entities.add(entity)
     this.events.emit('create', entity)
     return entity
   }
@@ -101,12 +101,10 @@ export class EntitySystem {
    * ```
    */
   public destroy(entity: Entity) {
-    const index = this.entities.indexOf(entity)
-    if (index !== -1) {
-      entity.components.forEach((c) => c.destroy())
-      entity.components.clear()
-      entity.components.events.removeAllListeners()
-      this.entities.splice(index, 1)
+    entity.components.forEach((c) => c.destroy())
+    entity.components.clear()
+    entity.components.events.removeAllListeners()
+    if (this.entities.delete(entity)) {
       this.events.emit('destroy', { entity })
     }
   }
@@ -155,5 +153,6 @@ export class EntitySystem {
     this.entities.forEach((e) => {
       this.destroy(e)
     })
+    this.entities.clear()
   }
 }
