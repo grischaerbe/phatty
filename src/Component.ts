@@ -28,7 +28,10 @@ export abstract class Component {
   private checkRequired() {
     if (this.required.length > 0) {
       const missing = this.required.filter((r) => !this.entity.components.has(r)).map((r) => r.name)
-      if (missing.length > 0) throw new Error(`Missing required components: ${missing.join(', ')}`)
+      const thisName = this.constructor.name
+      if (missing.length > 0) {
+        throw new Error(`${thisName}: missing required components: ${missing.join(', ')}`)
+      }
     }
   }
 
