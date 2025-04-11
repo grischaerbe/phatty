@@ -1,5 +1,13 @@
 # phatty
 
+## 0.0.12
+
+### Patch Changes
+
+- c15b4b1: better error messages
+- 916184c: Run destroy on component on removal
+- ca3ce67: Early return in component requirement checks
+
 ## 0.0.11
 
 ### Patch Changes
