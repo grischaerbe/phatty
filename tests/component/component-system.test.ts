@@ -33,6 +33,20 @@ describe('ComponentSystem', () => {
     expect(() => entity.components.get(TestComponent)).toThrow()
   })
 
+  it('should destroy components when removed', () => {
+    const scene = createMockScene()
+    const entity = scene.entities.create()
+    let destroyed = false
+    class TestComponent extends Component {
+      public destroy() {
+        destroyed = true
+      }
+    }
+    entity.components.add(TestComponent)
+    entity.components.remove(TestComponent)
+    expect(destroyed).toEqual(true)
+  })
+
   it('should respect the component priority', () => {
     const scene = createMockScene()
     const entity = scene.entities.create()

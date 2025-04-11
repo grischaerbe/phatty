@@ -154,6 +154,7 @@ export class ComponentSystem {
   public remove<T extends Component>(Component: ComponentConstructor<T>) {
     const instance = this.componentsMap.get(Component)
     if (!instance) return
+    instance.destroy()
     this.componentsMap.delete(Component)
     this.componentsListDirty = true
 
