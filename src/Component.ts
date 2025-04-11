@@ -26,12 +26,12 @@ export abstract class Component {
   private created = false
 
   private checkRequired() {
-    if (this.required.length > 0) {
-      const missing = this.required.filter((r) => !this.entity.components.has(r)).map((r) => r.name)
-      const thisName = this.constructor.name
-      if (missing.length > 0) {
-        throw new Error(`${thisName}: missing required components: ${missing.join(', ')}`)
-      }
+    if (this.required.length === 0) return
+
+    const missing = this.required.filter((r) => !this.entity.components.has(r)).map((r) => r.name)
+    const thisName = this.constructor.name
+    if (missing.length > 0) {
+      throw new Error(`${thisName}: missing required components: ${missing.join(', ')}`)
     }
   }
 
