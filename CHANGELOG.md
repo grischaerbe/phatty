@@ -1,5 +1,11 @@
 # phatty
 
+## 0.0.13
+
+### Patch Changes
+
+- 0ed9018: Fix entity destroy event payload type
+
 ## 0.0.12
 
 ### Patch Changes
