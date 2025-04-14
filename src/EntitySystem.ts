@@ -105,7 +105,7 @@ export class EntitySystem {
     entity.components.clear()
     entity.components.events.removeAllListeners()
     if (this.entities.delete(entity)) {
-      this.events.emit('destroy', { entity })
+      this.events.emit('destroy', entity)
     }
   }
 
