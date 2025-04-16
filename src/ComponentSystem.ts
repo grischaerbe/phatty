@@ -26,7 +26,7 @@ import type { ComponentConstructor } from './types'
  * ```
  */
 export class ComponentSystem {
-  private componentsMap: Map<typeof Component, Component> = new Map()
+  private componentsMaps: Map<typeof Component, Component> = new Map()
   private componentsList: Component[] = []
   private componentsListDirty = true
 
