@@ -1,5 +1,11 @@
 # phatty
 
+## 0.0.15
+
+### Patch Changes
+
+- 0d4ba3f: Make query builder without query consistent
+
 ## 0.0.14
 
 ### Patch Changes
