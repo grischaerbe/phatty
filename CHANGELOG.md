@@ -1,5 +1,11 @@
 # phatty
 
+## 0.0.14
+
+### Patch Changes
+
+- c9a42e5: extended with and without queries, now supporting custom checks on component instances
+
 ## 0.0.13
 
 ### Patch Changes
