@@ -28,16 +28,25 @@ export class QueryBuilder {
    * query().with(PlayerComponent)
    *
    * // Multiple components
-   * query().with(MovementComponent, SpriteComponent)
+   * query().with([MovementComponent, SpriteComponent])
+   *
+   * // With a `where` function
+   * query().with(MovementComponent, (c) => c.x > 100)
+   *
+   * // With multiple components and a `where` function
+   * query().with(
+   *   [MovementComponent, SpriteComponent],
+   *   ([movement, sprite]) => movement.x > 100 && sprite.visible
+   * )
    * ```
    */
   with<CC extends ComponentConstructor>(
     component: CC,
-    check?: (component: InstanceType<CC>) => boolean
+    where?: (component: InstanceType<CC>) => boolean
   ): this
   with<const ComponentConstructors extends [ComponentConstructor, ...ComponentConstructor[]]>(
     components: ComponentConstructors,
-    check?: (components: {
+    where?: (components: {
       [K in keyof ComponentConstructors]: InstanceType<ComponentConstructors[K]>
     }) => boolean
   ): this
@@ -45,11 +54,11 @@ export class QueryBuilder {
     componentOrComponents:
       | ComponentConstructor
       | readonly [ComponentConstructor, ...ComponentConstructor[]],
-    check?: (component: any) => boolean
+    where?: (component: any) => boolean
   ): this {
     if (Array.isArray(componentOrComponents)) {
       const ctors = componentOrComponents as ComponentConstructor[]
-      if (!check) {
+      if (!where) {
         const condition: Condition = (entity) => {
           return ctors.every((ctor) => entity.components.has(ctor))
         }
@@ -60,13 +69,13 @@ export class QueryBuilder {
           if (instances.some((instance) => instance === undefined)) {
             return false
           }
-          return check(instances)
+          return where(instances)
         }
         this.conditions.push(condition)
       }
     } else {
       const ctor = componentOrComponents as ComponentConstructor
-      if (!check) {
+      if (!where) {
         const condition: Condition = (entity) => {
           return entity.components.has(ctor)
         }
@@ -77,7 +86,7 @@ export class QueryBuilder {
           if (!componentInstance) {
             return false
           }
-          return check(componentInstance)
+          return where(componentInstance)
         }
         this.conditions.push(condition)
       }
@@ -98,11 +107,58 @@ export class QueryBuilder {
    * query().without(DeadComponent, DisabledComponent)
    * ```
    */
-  without(...components: ComponentConstructor[]): this {
-    const condition: Condition = (entity) => {
-      return !components.some((Component) => entity.components.has(Component))
+  without<CC extends ComponentConstructor>(
+    component: CC,
+    where?: (component: InstanceType<CC>) => boolean
+  ): this
+  without<const ComponentConstructors extends [ComponentConstructor, ...ComponentConstructor[]]>(
+    components: ComponentConstructors,
+    where?: (components: {
+      [K in keyof ComponentConstructors]: InstanceType<ComponentConstructors[K]>
+    }) => boolean
+  ): this
+  without(
+    componentOrComponents:
+      | ComponentConstructor
+      | readonly [ComponentConstructor, ...ComponentConstructor[]],
+    where?: (component: any) => boolean
+  ): this {
+    if (Array.isArray(componentOrComponents)) {
+      const ctors = componentOrComponents as ComponentConstructor[]
+      if (!where) {
+        const condition: Condition = (entity) => {
+          return !ctors.some((ctor) => entity.components.has(ctor))
+        }
+        this.conditions.push(condition)
+      } else {
+        const condition: Condition = (entity) => {
+          const instances = ctors.map((ctor) => entity.components.find(ctor))
+          if (instances.some((instance) => instance === undefined)) {
+            return true // keep entity if it's missing any required component
+          }
+          return !where(instances) // exclude if predicate is true
+        }
+        this.conditions.push(condition)
+      }
+    } else {
+      const ctor = componentOrComponents as ComponentConstructor
+      if (!where) {
+        const condition: Condition = (entity) => {
+          return !entity.components.has(ctor)
+        }
+        this.conditions.push(condition)
+      } else {
+        const condition: Condition = (entity) => {
+          const instance = entity.components.find(ctor)
+          if (!instance) {
+            return true // keep entity if component is missing
+          }
+          return !where(instance) // exclude if predicate is true
+        }
+        this.conditions.push(condition)
+      }
     }
-    this.conditions.push(condition)
+
     return this
   }
 

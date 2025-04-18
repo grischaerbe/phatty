@@ -36,7 +36,8 @@ describe('QueryBuilder', () => {
       scene.entities.create(), // Entity 6: A, B, C, D
 
       scene.entities.create(), // Entity 7: Parametric with param 'foo'
-      scene.entities.create() // Entity 8: Parametric with param 'bar'
+      scene.entities.create(), // Entity 8: Parametric with param 'bar'
+      scene.entities.create() // Entity 9: A, Parametric with param 'bar'
     ]
 
     // Add components to entities
@@ -61,7 +62,11 @@ describe('QueryBuilder', () => {
     entities[6].components.add(TestComponentD)
 
     entities[7].components.add(ParametricComponent, 'foo')
+
     entities[8].components.add(ParametricComponent, 'bar')
+
+    entities[9].components.add(TestComponentA)
+    entities[9].components.add(ParametricComponent, 'baz')
 
     query = scene.entities.query
   })
@@ -69,18 +74,19 @@ describe('QueryBuilder', () => {
   describe('with()', () => {
     it('should return all entities', () => {
       const result = query.all()
-      expect(result).toHaveLength(9)
+      expect(result).toHaveLength(10)
     })
 
     it('should find entities with a single component', () => {
       const result = query.with(TestComponentA).all()
 
-      expect(result).toHaveLength(5)
+      expect(result).toHaveLength(6)
       expect(result).toContain(entities[1])
       expect(result).toContain(entities[2])
       expect(result).toContain(entities[3])
       expect(result).toContain(entities[4])
       expect(result).toContain(entities[6])
+      expect(result).toContain(entities[9])
     })
 
     it('should find entities with multiple components', () => {
@@ -91,13 +97,13 @@ describe('QueryBuilder', () => {
       expect(result).toContain(entities[6])
     })
 
-    it('should find entities with a component and a check function', () => {
+    it('should find entities with a component and a where function', () => {
       const result = query.with(ParametricComponent, (c) => c.param === 'foo').all()
       expect(result).toHaveLength(1)
       expect(result).toContain(entities[7])
     })
 
-    it('should find entities with multiple components and a check function', () => {
+    it('should find entities with multiple components and a where function', () => {
       const result = query
         .with([ParametricComponent, TestComponentA], ([c1, c2]) => c1.param === 'foo')
         .all()
@@ -114,9 +120,23 @@ describe('QueryBuilder', () => {
     })
 
     it('should find entities without multiple components', () => {
-      const result = query.without(TestComponentA, TestComponentB).all()
+      const result = query.without([TestComponentA, TestComponentB]).all()
       expect(result).toHaveLength(3)
       expect(result).toContain(entities[0])
+    })
+
+    it('should find entities without a component and a where function', () => {
+      const result = query.without(ParametricComponent, (c) => c.param === 'foo').all()
+      expect(result).toContain(entities[8])
+    })
+
+    it('should find entities without multiple components and a where function', () => {
+      const result = query
+        .without([ParametricComponent, TestComponentA], ([c1, _c2]) => {
+          return c1.param === 'baz'
+        })
+        .all()
+      expect(result).toHaveLength(9)
     })
   })
 
@@ -135,7 +155,7 @@ describe('QueryBuilder', () => {
   describe('count()', () => {
     it('should return the number of matching entities', () => {
       const result = query.with(TestComponentA).count()
-      expect(result).toBe(5)
+      expect(result).toBe(6)
     })
 
     it('should return 0 if no entity matches', () => {
@@ -158,7 +178,7 @@ describe('QueryBuilder', () => {
 
   describe('complex queries', () => {
     it('should handle multiple conditions', () => {
-      const result = query.with(TestComponentA).with(TestComponentB).without(TestComponentD).all()
+      const result = query.with([TestComponentA, TestComponentB]).without(TestComponentD).all()
       expect(result).toHaveLength(2)
       expect(result).toContain(entities[2])
       expect(result).toContain(entities[3])
