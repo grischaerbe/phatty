@@ -249,11 +249,17 @@ their components. It supports both positive and negative component matching, and
 offers several methods to get results.
 
 ```ts
-// Find entities with specific components
+// Find entities with a specific component
 const players = this.entities.query.with(PlayerComponent).all()
 
-// Find entities without specific components
-const activeEnemies = this.entities.query.with(EnemyComponent).without(DeadComponent).all()
+// Find entities by complex criteria
+const activeSoldiers = this.entities.query
+  .with(PlayerComponent, (e) => e.type === 'soldier')
+  .without(DeadComponent)
+  .all()
+
+// Find entities by the presence of multiple components
+const deadEnemies = this.entities.query.with([EnemyComponent, DeadComponent]).all()
 
 // Find the first matching entity
 const player = this.entities.query.with(PlayerComponent).first()
@@ -302,8 +308,28 @@ class EntitySystem {
 
 ```ts
 class QueryBuilder {
-  with(...components: ComponentConstructor[]): this
-  without(...components: ComponentConstructor[]): this
+  with<CC extends ComponentConstructor>(
+    component: CC,
+    where?: (component: InstanceType<CC>) => boolean
+  ): this
+  with<const ComponentConstructors extends [ComponentConstructor, ...ComponentConstructor[]]>(
+    components: ComponentConstructors,
+    where?: (components: {
+      [K in keyof ComponentConstructors]: InstanceType<ComponentConstructors[K]>
+    }) => boolean
+  ): this
+
+  without<CC extends ComponentConstructor>(
+    component: CC,
+    where?: (component: InstanceType<CC>) => boolean
+  ): this
+  without<const ComponentConstructors extends [ComponentConstructor, ...ComponentConstructor[]]>(
+    components: ComponentConstructors,
+    where?: (components: {
+      [K in keyof ComponentConstructors]: InstanceType<ComponentConstructors[K]>
+    }) => boolean
+  ): this
+
   first(): Entity | undefined
   all(): Entity[]
   count(): number
