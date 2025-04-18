@@ -96,15 +96,30 @@ export class QueryBuilder {
   }
 
   /**
-   * Query for entities that don't have any of the specified components
+   * Exclude entities that have all of the specified components.
+   *
+   * If a `where` function is provided, entities are excluded only if they have all specified
+   * components and the predicate returns `true` for the component instance(s).
+   *
+   * Entities that are missing any of the specified components are always included.
    *
    * @example
    * ```ts
-   * // Single component
+   * // Exclude entities that have InvisibleComponent
    * query().without(InvisibleComponent)
    *
-   * // Multiple components
-   * query().without(DeadComponent, DisabledComponent)
+   * // Exclude entities that have both DeadComponent and DisabledComponent
+   * query().without([DeadComponent, DisabledComponent])
+   *
+   * // Exclude entities that have HealthComponent with a value of 0 or less
+   * query().without(HealthComponent, (c) => c.value <= 0)
+   *
+   * // Exclude entities that have both FrozenComponent and DisabledComponent,
+   * // but only if the condition is met
+   * query().without(
+   *   [FrozenComponent, DisabledComponent],
+   *   ([frozen, disabled]) => frozen.duration > 5 && disabled.permanent
+   * )
    * ```
    */
   without<CC extends ComponentConstructor>(
@@ -127,7 +142,7 @@ export class QueryBuilder {
       const ctors = componentOrComponents as ComponentConstructor[]
       if (!where) {
         const condition: Condition = (entity) => {
-          return !ctors.some((ctor) => entity.components.has(ctor))
+          return !ctors.every((ctor) => entity.components.has(ctor))
         }
         this.conditions.push(condition)
       } else {

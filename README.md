@@ -261,6 +261,12 @@ const activeSoldiers = this.entities.query
 // Find entities by the presence of multiple components
 const deadEnemies = this.entities.query.with([EnemyComponent, DeadComponent]).all()
 
+// Find entities by the absence of multiple components
+const alivePlayers = this.entities.query
+  .with(PlayerComponent)
+  .without([DeadComponent, AiComponent])
+  .all()
+
 // Find the first matching entity
 const player = this.entities.query.with(PlayerComponent).first()
 
@@ -273,13 +279,29 @@ const activeEnemyCount = this.entities.query.with(EnemyComponent).without(DeadCo
 
 The Query Builder supports the following methods:
 
-- `with(...components)`: Find entities that have all specified components
-- `without(...components)`: Find entities that don't have any of the specified
-  components
-- `first()`: Get the first matching entity
-- `all()`: Get all matching entities
-- `count()`: Count matching entities
-- `exists()`: Check if any entities match
+- `with(component, where?)`: Find entities that have the specified component,
+  optionally filtered by a predicate on the component instance.
+
+- `with([componentA, componentB, ...], where?)`: Find entities that have all
+  specified components, optionally filtered by a predicate on the array of
+  component instances.
+
+- `without(component, where?)`: Exclude entities that have the specified
+  component, optionally filtered by a predicate on the component instance. If
+  the predicate returns `true`, the entity will be excluded.
+
+- `without([componentA, componentB, ...], where?)`: Exclude entities that have
+  _all_ specified components, optionally filtered by a predicate on the array of
+  component instances. If the predicate returns `true`, the entity will be
+  excluded.
+
+- `first()`: Get the first matching entity.
+
+- `all()`: Get all matching entities.
+
+- `count()`: Count matching entities.
+
+- `exists()`: Check if any entities match.
 
 ## API Reference
 

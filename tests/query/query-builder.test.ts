@@ -121,7 +121,7 @@ describe('QueryBuilder', () => {
 
     it('should find entities without multiple components', () => {
       const result = query.without([TestComponentA, TestComponentB]).all()
-      expect(result).toHaveLength(3)
+      expect(result).toHaveLength(7)
       expect(result).toContain(entities[0])
     })
 
