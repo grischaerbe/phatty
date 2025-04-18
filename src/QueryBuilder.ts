@@ -1,5 +1,6 @@
 import type { ComponentConstructor } from './types'
 import type { Entity } from './Entity'
+import { Component } from 'src/Component'
 
 type Condition = (entity: Entity) => boolean
 
@@ -30,11 +31,58 @@ export class QueryBuilder {
    * query().with(MovementComponent, SpriteComponent)
    * ```
    */
-  with(...components: ComponentConstructor[]): this {
-    const condition: Condition = (entity) => {
-      return components.every((Component) => entity.components.has(Component))
+  with<CC extends ComponentConstructor>(
+    component: CC,
+    check?: (component: InstanceType<CC>) => boolean
+  ): this
+  with<const ComponentConstructors extends [ComponentConstructor, ...ComponentConstructor[]]>(
+    components: ComponentConstructors,
+    check?: (components: {
+      [K in keyof ComponentConstructors]: InstanceType<ComponentConstructors[K]>
+    }) => boolean
+  ): this
+  with(
+    componentOrComponents:
+      | ComponentConstructor
+      | readonly [ComponentConstructor, ...ComponentConstructor[]],
+    check?: (component: any) => boolean
+  ): this {
+    if (Array.isArray(componentOrComponents)) {
+      const ctors = componentOrComponents as ComponentConstructor[]
+      if (!check) {
+        const condition: Condition = (entity) => {
+          return ctors.every((ctor) => entity.components.has(ctor))
+        }
+        this.conditions.push(condition)
+      } else {
+        const condition: Condition = (entity) => {
+          const instances = ctors.map((ctor) => entity.components.find(ctor))
+          if (instances.some((instance) => instance === undefined)) {
+            return false
+          }
+          return check(instances)
+        }
+        this.conditions.push(condition)
+      }
+    } else {
+      const ctor = componentOrComponents as ComponentConstructor
+      if (!check) {
+        const condition: Condition = (entity) => {
+          return entity.components.has(ctor)
+        }
+        this.conditions.push(condition)
+      } else {
+        const condition: Condition = (entity) => {
+          const componentInstance = entity.components.find(ctor)
+          if (!componentInstance) {
+            return false
+          }
+          return check(componentInstance)
+        }
+        this.conditions.push(condition)
+      }
     }
-    this.conditions.push(condition)
+
     return this
   }
 

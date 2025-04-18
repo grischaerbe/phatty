@@ -5,6 +5,12 @@ import { QueryBuilder } from '../../src/QueryBuilder'
 import { describe, expect, it, beforeEach } from 'bun:test'
 import { createMockScene } from '../scene'
 
+class ParametricComponent extends Component {
+  constructor(public readonly param: string) {
+    super()
+  }
+}
+
 // Test components
 class TestComponentA extends Component {}
 class TestComponentB extends Component {}
@@ -27,7 +33,10 @@ describe('QueryBuilder', () => {
       scene.entities.create(), // Entity 3: A, B, C
       scene.entities.create(), // Entity 4: A, C
       scene.entities.create(), // Entity 5: B, C
-      scene.entities.create() // Entity 6: A, B, C, D
+      scene.entities.create(), // Entity 6: A, B, C, D
+
+      scene.entities.create(), // Entity 7: Parametric with param 'foo'
+      scene.entities.create() // Entity 8: Parametric with param 'bar'
     ]
 
     // Add components to entities
@@ -51,13 +60,16 @@ describe('QueryBuilder', () => {
     entities[6].components.add(TestComponentC)
     entities[6].components.add(TestComponentD)
 
+    entities[7].components.add(ParametricComponent, 'foo')
+    entities[8].components.add(ParametricComponent, 'bar')
+
     query = scene.entities.query
   })
 
   describe('with()', () => {
     it('should return all entities', () => {
       const result = query.all()
-      expect(result).toHaveLength(7)
+      expect(result).toHaveLength(9)
     })
 
     it('should find entities with a single component', () => {
@@ -72,25 +84,38 @@ describe('QueryBuilder', () => {
     })
 
     it('should find entities with multiple components', () => {
-      const result = query.with(TestComponentA, TestComponentB).all()
+      const result = query.with([TestComponentA, TestComponentB]).all()
       expect(result).toHaveLength(3)
       expect(result).toContain(entities[2])
       expect(result).toContain(entities[3])
       expect(result).toContain(entities[6])
+    })
+
+    it('should find entities with a component and a check function', () => {
+      const result = query.with(ParametricComponent, (c) => c.param === 'foo').all()
+      expect(result).toHaveLength(1)
+      expect(result).toContain(entities[7])
+    })
+
+    it('should find entities with multiple components and a check function', () => {
+      const result = query
+        .with([ParametricComponent, TestComponentA], ([c1, c2]) => c1.param === 'foo')
+        .all()
+      expect(result).toHaveLength(0)
     })
   })
 
   describe('without()', () => {
     it('should find entities without a single component', () => {
       const result = query.without(TestComponentA).all()
-      expect(result).toHaveLength(2)
+      expect(result).toHaveLength(4)
       expect(result).toContain(entities[0])
       expect(result).toContain(entities[5])
     })
 
     it('should find entities without multiple components', () => {
       const result = query.without(TestComponentA, TestComponentB).all()
-      expect(result).toHaveLength(1)
+      expect(result).toHaveLength(3)
       expect(result).toContain(entities[0])
     })
   })
