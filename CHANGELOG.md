@@ -1,5 +1,11 @@
 # phatty
 
+## 0.0.16
+
+### Patch Changes
+
+- e67a23d: Fix wrong examples
+
 ## 0.0.15
 
 ### Patch Changes
