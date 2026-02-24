@@ -439,7 +439,7 @@ Sprite component that uses the transform
 
 ```ts
 class SpriteComponent extends Component {
-  required: [TransformComponent]
+  required = [TransformComponent]
   private sprite: Phaser.GameObjects.Sprite
   private transform!: TransformComponent
 
@@ -464,7 +464,7 @@ Movement component that moves the transform
 
 ```ts
 class MovementComponent extends Component {
-  required: [TransformComponent]
+  required = [TransformComponent]
   private transform!: TransformComponent
   private speed = 200
   private direction = new Phaser.Math.Vector2()
@@ -492,8 +492,8 @@ the movement component
 
 ```ts
 class PlayerInputComponent extends Component {
-  required: [MovementComponent]
-  priority: -1
+  required = [MovementComponent]
+  priority = -1
   private movement!: MovementComponent
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys
   private moveDirection: Phaser.Math.Vector2
