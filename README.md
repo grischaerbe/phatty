@@ -233,7 +233,7 @@ The `required` metadata ensures component dependencies are met:
 
 ```ts
 class SpriteComponent extends Component {
-  required: [TransformComponent]
+  required = [TransformComponent]
 
   create() {
     // If there's no TransformComponent, this will throw an error
